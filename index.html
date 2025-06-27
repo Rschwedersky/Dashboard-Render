@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Dashboard SHT40 - Controle de Umidade</title>
+<style>
+  body { font-family: Arial, sans-serif; margin: 20px; }
+  h1 { color: #333; }
+  #data, #inputs { margin-top: 20px; }
+  label { display: block; margin-top: 10px; }
+  input[type=number] { width: 80px; }
+  button { margin-top: 15px; padding: 8px 15px; cursor: pointer; }
+  #msg { margin-top: 15px; font-weight: bold; }
+</style>
+</head>
+<body>
+  <h1>Dashboard SHT40 - Controle de Umidade</h1>
+
+  <div id="data">Carregando dados do sensor...</div>
+
+  <div id="inputs">
+    <h2>Definir limites de umidade (%)</h2>
+    <label for="hum_low">Umidade Mínima (hum_low):</label>
+    <input type="number" id="hum_low" min="0" max="100" step="0.1" />
+
+    <label for="hum_high">Umidade Máxima (hum_high):</label>
+    <input type="number" id="hum_high" min="0" max="100" step="0.1" />
+
+    <button onclick="sendLimits()">Enviar Limites</button>
+
+    <div id="msg"></div>
+  </div>
+
+  <script>
+    async function fetchLatestData() {
+      try {
+        const response = await fetch('https://backend-flask-render-1.onrender.com/latest'); // Ajuste URL se precisar
+        if (!response.ok) throw new Error('Erro ao buscar dados');
+        const data = await response.json();
+
+        const sensorData = data['sensors/sht40'];
+        if(sensorData) {
+          document.getElementById('data').innerHTML = `
+            <strong>Temperatura:</strong> ${sensorData.temperature.toFixed(2)} °C<br/>
+            <strong>Umidade:</strong> ${sensorData.humidity.toFixed(2)} %
+          `;
+        } else {
+          document.getElementById('data').innerText = 'Nenhum dado do sensor disponível ainda.';
+        }
+      } catch (error) {
+        document.getElementById('data').innerText = 'Erro ao obter dados: ' + error.message;
+      }
+    }
+
+    async function sendLimits() {
+      const humLow = parseFloat(document.getElementById('hum_low').value);
+      const humHigh = parseFloat(document.getElementById('hum_high').value);
+      const msgDiv = document.getElementById('msg');
+
+      if (isNaN(humLow) || isNaN(humHigh)) {
+        msgDiv.innerText = 'Por favor, preencha os dois limites com valores válidos.';
+        return;
+      }
+
+      if (humLow >= humHigh) {
+        msgDiv.innerText = 'O limite mínimo deve ser menor que o máximo.';
+        return;
+      }
+
+      try {
+        const response = await fetch("https://backend-flask-render-1.onrender.com/set-limits", {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ values: { hum_low: humLow, hum_high: humHigh } })
+        });
+
+        if (!response.ok) throw new Error('Erro ao enviar limites');
+        const resJson = await response.json();
+
+        msgDiv.innerText = resJson.status || 'Limites enviados com sucesso!';
+      } catch (err) {
+        msgDiv.innerText = 'Erro: ' + err.message;
+      }
+    }
+
+    // Atualiza os dados do sensor a cada 5 segundos
+    fetchLatestData();
+    setInterval(fetchLatestData, 5000);
+  </script>
+</body>
+</html>

@@ -52,7 +52,10 @@
         if(sensorData) {
           document.getElementById('data').innerHTML = `
             <strong>Temperatura:</strong> ${sensorData.temperature.toFixed(2)} °C<br/>
-            <strong>Umidade:</strong> ${sensorData.humidity.toFixed(2)} %
+            <strong>Umidade:</strong> ${sensorData.humidity.toFixed(2)} %<br/>
+            <strong>Umidade Mínima (humLow):</strong> ${sensorData.humLow.toFixed(2)} %<br/>
+            <strong>Umidade Máxima (humHigh):</strong> ${sensorData.humHigh.toFixed(2)} %<br/>
+            <strong>Status da Tomada:</strong> ${sensorData.status}<br/>
           `;
         } else {
           document.getElementById('data').innerText = 'Nenhum dado do sensor disponível ainda.';

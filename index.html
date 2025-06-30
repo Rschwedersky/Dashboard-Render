@@ -31,6 +31,15 @@
 
     <div id="msg"></div>
   </div>
+   <div id="tapo-control">
+    <h2>Controle da Tomada Tapo</h2>
+    <label>
+      <input type="checkbox" id="tapoToggle" onchange="toggleTapo()" />
+      Ligar/Desligar
+    </label>
+    <div id="toggleMsg"></div>
+  </div>
+
 
   <script>
     async function fetchLatestData() {
@@ -81,6 +90,27 @@
         msgDiv.innerText = resJson.status || 'Limites enviados com sucesso!';
       } catch (err) {
         msgDiv.innerText = 'Erro: ' + err.message;
+      }
+    }
+    async function toggleTapo() {
+      const isChecked = document.getElementById('tapoToggle').checked;
+      const toggleMsg = document.getElementById('toggleMsg');
+
+      const desiredState = isChecked ? "on" : "off";
+
+      try {
+        const response = await fetch("https://backend-flask-render-1.onrender.com/toggle-plug", {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ state: desiredState })
+        });
+
+        if (!response.ok) throw new Error("Falha ao enviar comando");
+
+        const res = await response.json();
+        toggleMsg.innerText = res.status || `Comando ${desiredState} enviado com sucesso`;
+      } catch (err) {
+        toggleMsg.innerText = "Erro: " + err.message;
       }
     }
 

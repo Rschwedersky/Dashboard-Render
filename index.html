@@ -42,14 +42,30 @@
 
 
   <script>
-    async function fetchLatestData() {
+  async function fetchLatestData() {
       try {
         const response = await fetch('https://backend-flask-render-1.onrender.com/latest'); // Ajuste URL se precisar
         if (!response.ok) throw new Error('Erro ao buscar dados');
         const data = await response.json();
 
-        const sensorData = data['device/state'];
-        if(sensorData) {
+        const state = data["device/state"];  // pega o objeto principal
+        if (state) {
+          // Normaliza os dados em um objeto "plano"
+          const sensorData = {
+            co2: state.sensor.co2,
+            temperature: state.sensor.temperature,
+            humidity: state.sensor.humidity,
+            humLow: state.thresholds.humidity_low,
+            humHigh: state.thresholds.humidity_high,
+            tempLow: state.thresholds.temperature_low,
+            tempHigh: state.thresholds.temperature_high,
+            humidifier: state.relays.humidifier,
+            light: state.relays.light,
+            fan: state.relays.fan,
+            fridge: state.relays.fridge,
+            timestamp: state.timestamp
+          };
+
           document.getElementById('data').innerHTML = `
             <strong>CO₂:</strong> ${sensorData.co2.toFixed(0)} ppm<br/>
             <strong>Temperatura:</strong> ${sensorData.temperature.toFixed(2)} °C<br/>
@@ -62,6 +78,7 @@
             <strong>Luz:</strong> ${sensorData.light ? "Ligada" : "Desligada"}<br/>
             <strong>Ventilador:</strong> ${sensorData.fan ? "Ligado" : "Desligado"}<br/>
             <strong>Refrigerador:</strong> ${sensorData.fridge ? "Ligado" : "Desligado"}<br/>
+            <strong>Última atualização:</strong> ${sensorData.timestamp}<br/>
           `;
         } else {
           document.getElementById('data').innerText = 'Nenhum dado do sensor disponível ainda.';
@@ -70,6 +87,7 @@
         document.getElementById('data').innerText = 'Erro ao obter dados: ' + error.message;
       }
     }
+
 
     async function sendLimits() {
       const humLow = parseFloat(document.getElementById('hum_low').value);

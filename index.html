@@ -51,11 +51,17 @@
         const sensorData = data['sensors/sht40'];
         if(sensorData) {
           document.getElementById('data').innerHTML = `
+            <strong>CO₂:</strong> ${sensorData.co2.toFixed(0)} ppm<br/>
             <strong>Temperatura:</strong> ${sensorData.temperature.toFixed(2)} °C<br/>
             <strong>Umidade:</strong> ${sensorData.humidity.toFixed(2)} %<br/>
             <strong>Umidade Mínima (humLow):</strong> ${sensorData.humLow.toFixed(2)} %<br/>
             <strong>Umidade Máxima (humHigh):</strong> ${sensorData.humHigh.toFixed(2)} %<br/>
-            <strong>Status da Tomada:</strong> ${sensorData.status}<br/>
+            <strong>Temperatura Mínima (tempLow):</strong> ${sensorData.tempLow.toFixed(2)} °C<br/>
+            <strong>Temperatura Máxima (tempHigh):</strong> ${sensorData.tempHigh.toFixed(2)} °C<br/>
+            <strong>Umidificador:</strong> ${sensorData.humidifier ? "Ligado" : "Desligado"}<br/>
+            <strong>Luz:</strong> ${sensorData.light ? "Ligada" : "Desligada"}<br/>
+            <strong>Ventilador:</strong> ${sensorData.fan ? "Ligado" : "Desligado"}<br/>
+            <strong>Refrigerador:</strong> ${sensorData.fridge ? "Ligado" : "Desligado"}<br/>
           `;
         } else {
           document.getElementById('data').innerText = 'Nenhum dado do sensor disponível ainda.';

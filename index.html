@@ -48,7 +48,7 @@
         if (!response.ok) throw new Error('Erro ao buscar dados');
         const data = await response.json();
 
-        const sensorData = data['sensors/sht40'];
+        const sensorData = data['device/state'];
         if(sensorData) {
           document.getElementById('data').innerHTML = `
             <strong>CO₂:</strong> ${sensorData.co2.toFixed(0)} ppm<br/>

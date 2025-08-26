@@ -7,44 +7,80 @@
 <style>
   body { font-family: Arial, sans-serif; margin: 20px; }
   h1 { color: #333; }
-  #data, #inputs { margin-top: 20px; }
+  #data, #inputs, #tapo-control { margin-top: 20px; }
   label { display: block; margin-top: 10px; }
   input[type=number] { width: 80px; }
   button { margin-top: 15px; padding: 8px 15px; cursor: pointer; }
   #msg { margin-top: 15px; font-weight: bold; }
-  #youtube-video { margin-top: 20px; text-align: center; }
-  #youtube-video iframe { max-width: 100%; }
+  #container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    justify-content: space-between;
+    margin-left: 20px;
+    margin-right: 20px;
+  }
+  #main-content {
+    flex: 1;
+    min-width: 300px;
+  }
+  #youtube-video {
+    flex: 1;
+    min-width: 300px;
+    text-align: center;
+    margin-top: 20px;
+  }
+  #youtube-video iframe {
+    max-width: 100%;
+    width: 560px;
+    height: 315px;
+  }
+  @media (max-width: 768px) {
+    #container {
+      flex-direction: column;
+      margin-left: 0;
+      margin-right: 0;
+    }
+  }
 </style>
 </head>
 <body>
   <h1>Dashboard SHT40 - Controle de Umidade</h1>
 
-  <div id="data">Carregando dados do sensor...</div>
+  <div id="container">
+    <div id="main-content">
+      <div id="data">Carregando dados do sensor...</div>
 
-  <div id="inputs">
-    <h2>Definir limites de umidade (%)</h2>
-    <label for="hum_low">Umidade Mínima (hum_low):</label>
-    <input type="number" id="hum_low" min="0" max="100" step="0.1" />
+      <div id="inputs">
+        <h2>Definir limites de umidade (%)</h2>
+        <label for="hum_low">Umidade Mínima (hum_low):</label>
+        <input type="number" id="hum_low" min="0" max="100" step="0.1" />
 
-    <label for="hum_high">Umidade Máxima (hum_high):</label>
-    <input type="number" id="hum_high" min="0" max="100" step="0.1" />
+        <label for="hum_high">Umidade Máxima (hum_high):</label>
+        <input type="number" id="hum_high" min="0" max="100" step="0.1" />
 
-    <button onclick="sendLimits()">Enviar Limites</button>
+        <button onclick="sendLimits()">Enviar Limites</button>
 
-    <div id="msg"></div>
+        <div id="msg"></div>
+      </div>
+
+      <div id="tapo-control">
+        <h2>Controle da Tomada Tapo</h2>
+        <label>
+          <input type="checkbox" id="tapoToggle" onchange="toggleTapo()" />
+          Ligar/Desligar
+        </label>
+        <div id="toggleMsg"></div>
+      </div>
+    </div>
+
+    <div id="youtube-video">
+      <h2>Aquafarm</h2>
+      <iframe width="560" height="315" src="https://www.youtube.com/embed/0eY2vWgQ_ss" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+    </div>
   </div>
-  <div id="tapo-control">
-    <h2>Controle da Tomada Tapo</h2>
-    <label>
-      <input type="checkbox" id="tapoToggle" onchange="toggleTapo()" />
-      Ligar/Desligar
-    </label>
-    <div id="toggleMsg"></div>
-  </div>
-  <div id="youtube-video">
-    <h2>Aquafarm</h2>
-    <iframe width="560" height="315" src="https://www.youtube.com/embed/0eY2vWgQ_ss" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
-  </div>
+</body>
+</html>
 
 
   <script>
